@@ -2,8 +2,20 @@ import { Context } from '@netlify/edge-functions';
 
 export default async function handler(request: Request, context: Context) {
   const url = new URL(request.url);
-  const pdf = url.searchParams.get('pdf');
-  const thumb = url.searchParams.get('thumb');
+  const pathParts = url.pathname.split('/').filter(Boolean);
+  
+  let pdf, thumb;
+  
+  // Check if this is a short code (e.g., /R001)
+  if (pathParts.length === 1 && pathParts[0].startsWith('R')) {
+    // Here you would lookup the full URLs using the code
+    // For now, redirect to main page as we need to set up the lookup system
+    return Response.redirect(url.origin, 302);
+  } else {
+    // Original format with pdf and thumb parameters
+    pdf = url.searchParams.get('pdf');
+    thumb = url.searchParams.get('thumb');
+  }
 
   const html = `<!DOCTYPE html>
 <html prefix="og: https://ogp.me/ns#">
